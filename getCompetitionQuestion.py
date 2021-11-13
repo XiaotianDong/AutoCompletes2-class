@@ -20,5 +20,5 @@ for student in Qingjiao2_class_APi.getAllStudentInfo(teacherAccount):
         question += demjson.decode(Qingjiao2_class_APi.getCompetitionQuestion(studentAccount, teacherAccount.gradeName, "单选题"))
     except RuntimeError as e:
         print(f"Error! {str(e)} when Get competition Question with Student Account {student['realName']}")
-    finally:
+    else:
         open("QuestionToDisplay.txt",'w').write(f"Question Title: {question['questionTitle']}\nAnswer: {question['questionContent']}\nQuestionId:{question['questionId']}")
