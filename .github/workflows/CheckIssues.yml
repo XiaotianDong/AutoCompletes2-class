@@ -4,7 +4,7 @@ name: Auto Get Competition Questions
 
 # Controls when the workflow will run
 on:
-  issue:
+  issues:
     types: [opened ]
   issue_comment:
     types: [created ]
