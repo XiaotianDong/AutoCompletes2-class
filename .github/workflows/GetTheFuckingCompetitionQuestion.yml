@@ -1,0 +1,73 @@
+# This is a basic workflow to help you get started with Actions
+
+name: Auto Get Competition Questions
+
+# Controls when the workflow will run
+on:
+  workflow_dispatch:
+    inputs:
+      teacherAccount:
+        description: ""
+        required: true
+        default: ''
+      teacherPassowrd:
+        description: ''
+        required: true
+        default: ''
+      studentTargetPassword:
+        default: ''
+        required: true
+        description: ''
+      IssueId:
+        default: ''
+        required: true
+        description: ''
+      Answer:
+        default: ''
+        required: false
+        description: ''
+      AllCompetitionFinished:
+        default: ''
+        required: false
+        description: ''
+
+  # Allows you to run this workflow manually from the Actions tab
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  # This workflow contains a single job called "build"
+  build:
+    # The type of runner that the job will run on
+    runs-on: ubuntu-latest
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+      - name: Pull the newleast Code
+      - uses: actions/checkout@v2
+      # Runs a set of commands using the runners shell
+      - name: setup chromedriver
+        uses: nanasess/setup-chromedriver@v1.0.1
+      - name: Setup Python
+        uses: actions/setup-python@v2.2.2
+      - name: Install Dependences
+        run: pip install selenium requests demjson
+      - name: Get Competition Question
+        run: python ./getCompetitionQuestion.py ${{github.event.inputs.teacherAccount}} ${{github.event.inputs.teacherPassword}} ${{github.event.inputs.studentTargetPassword}}
+      - name: Read Question file
+        uses: juliangruber/read-file-action@v1.1.4
+        with:
+          path: ./QuestionToDisplay.txt
+      - name: Send The Fuck Question to issue by a new comment
+        uses: actions-cool/issues-helper@v2
+        with:
+          actions: 'create-comment'
+          token: ${{ secrets.GITHUB_TOKEN }}
+          issue-number: ${{ github.event.issue.number }}
+          body: ${{ steps.package.outputs.content }}
+      - name: Set labels
+        uses: actions-cool/issues-helper@v2
+        with:
+          actions: 'set-labels'
+          token: ${{ secrets.GITHUB_TOKEN }}
+          issue-number: ${{ github.event.issue.number }}
+          labels: 'SecondLogin'
